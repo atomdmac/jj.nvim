@@ -304,6 +304,45 @@ function M.get_all_bookmarks()
 	return bookmarks
 end
 
+--- @class jj.bookmark_detail
+--- @field name string Bookmark name
+--- @field change_id string Short change ID
+--- @field description string First line of description
+
+--- Get all bookmarks with their change ID and description
+--- @return jj.bookmark_detail[] List of bookmark details, or empty list if none found
+function M.get_bookmarks_with_details()
+	local output, success = runner.execute_command(
+		[[jj bookmark list -T 'if(!self.remote(), name ++ "\t" ++ self.normal_target().change_id().shortest(4) ++ "\t" ++ self.normal_target().description().first_line() ++ "\n")']],
+		"Failed to get bookmark details",
+		nil,
+		true
+	)
+
+	if not success or not output then
+		return {}
+	end
+
+	local bookmarks = {}
+	local seen = {}
+	for line in output:gmatch("[^\n]+") do
+		line = vim.trim(line)
+		if line ~= "" and not line:match("Hint:") and not line:match("%(deleted%)") then
+			local name, change_id, description = line:match("^([^\t]+)\t([^\t]*)\t?(.*)$")
+			if name and not seen[name] then
+				table.insert(bookmarks, {
+					name = name,
+					change_id = change_id or "",
+					description = description or "",
+				})
+				seen[name] = true
+			end
+		end
+	end
+
+	return bookmarks
+end
+
 --- Get all tags in a repository
 --- @return string[] List of bookmarks, or empty list if none found
 function M.get_all_tags()

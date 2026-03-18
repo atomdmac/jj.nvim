@@ -1158,6 +1158,13 @@ function M.log_keymaps()
 			handler = M.handle_log_bookmark,
 			modes = { "n" },
 		},
+		bookmark_list = {
+			desc = "Open bookmark picker to edit a bookmarked revision",
+			handler = function()
+				require("jj.picker").bookmarks()
+			end,
+			modes = { "n" },
+		},
 		rebase = {
 			desc = "Rebase bookmark(s)",
 			handler = M.handle_log_rebase,

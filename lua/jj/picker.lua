@@ -162,4 +162,23 @@ function M.file_history()
 	end
 end
 
+--- Displays bookmarks in the configured picker for editing
+function M.bookmarks()
+	-- Ensure jj is installed
+	if not utils.ensure_jj() then
+		return
+	end
+
+	local bookmarks = utils.get_bookmarks_with_details()
+	if not bookmarks or #bookmarks == 0 then
+		return utils.notify("`Picker`: No bookmarks found", vim.log.levels.INFO)
+	end
+
+	if M.config.snacks then
+		require("jj.picker.snacks").bookmarks(M.config, bookmarks)
+	else
+		return utils.notify("No `Picker` enabled", vim.log.levels.INFO)
+	end
+end
+
 return M

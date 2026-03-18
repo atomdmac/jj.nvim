@@ -47,6 +47,7 @@ local split_module = require("jj.cmd.split")
 --- @field open_pr? string|string[]
 --- @field open_pr_list? string|string[]
 --- @field bookmark? string|string[]
+--- @field bookmark_list? string|string[]
 --- @field rebase? string|string[]
 --- @field rebase_mode? jj.cmd.rebase.keymaps
 --- @field squash? string|string[]
@@ -174,6 +175,7 @@ M.config = {
 			open_pr = "o",
 			open_pr_list = "<S-o>",
 			bookmark = "b",
+			bookmark_list = "B",
 			rebase = "r",
 			rebase_mode = {
 				onto = { "<CR>", "o" },
@@ -1297,7 +1299,9 @@ function M.j(args)
 			end
 		end,
 		bookmark = function()
-			if remaining_args[1] == "create" or remaining_args[1] == "c" then
+			if remaining_args[1] == "list" or remaining_args[1] == "l" then
+				require("jj.picker").bookmarks()
+			elseif remaining_args[1] == "create" or remaining_args[1] == "c" then
 				M.bookmark_create()
 			elseif remaining_args[1] == "move" or remaining_args[1] == "m" then
 				M.bookmark_move()
